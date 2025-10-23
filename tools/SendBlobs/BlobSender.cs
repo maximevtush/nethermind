@@ -77,7 +77,7 @@ internal class BlobSender
         }
 
         string? chainIdString = await _rpcClient.Post<string>("eth_chainId") ?? "1";
-        ulong chainId = HexConvert.ToUInt64(chainIdString);
+        ulong chainId = RpcQuantityParser.ParseUInt64(chainIdString);
 
         foreach (PrivateKey privateKey in privateKeys)
         {
@@ -87,7 +87,7 @@ internal class BlobSender
                 _logger.Error("Unable to get nonce");
                 return;
             }
-            ulong nonce = HexConvert.ToUInt64(nonceString);
+            ulong nonce = RpcQuantityParser.ParseUInt64(nonceString);
 
             signers.Add(new(new Signer(chainId, privateKey, _logManager), nonce));
         }
@@ -221,7 +221,7 @@ internal class BlobSender
         }
 
         string? chainIdString = await _rpcClient.Post<string>("eth_chainId") ?? "1";
-        ulong chainId = HexConvert.ToUInt64(chainIdString);
+        ulong chainId = RpcQuantityParser.ParseUInt64(chainIdString);
 
 
         string? nonceString = await _rpcClient.Post<string>("eth_getTransactionCount", privateKey.Address, "latest");
@@ -230,7 +230,7 @@ internal class BlobSender
             _logger.Error("Unable to get nonce");
             return;
         }
-        ulong nonce = HexConvert.ToUInt64(nonceString);
+        ulong nonce = RpcQuantityParser.ParseUInt64(nonceString);
 
         Signer signer = new(chainId, privateKey, _logManager);
 
@@ -280,7 +280,7 @@ internal class BlobSender
         if (defaultMaxPriorityFeePerGas is null)
         {
             string? maxPriorityFeePerGasRes = await _rpcClient.Post<string>("eth_maxPriorityFeePerGas") ?? "1";
-            result.maxPriorityFeePerGas = HexConvert.ToUInt256(maxPriorityFeePerGasRes);
+            result.maxPriorityFeePerGas = RpcQuantityParser.ParseUInt256(maxPriorityFeePerGasRes);
         }
         else
         {
